@@ -139,9 +139,17 @@ def adam(x, dx, config=None):
   # the next_x variable. Don't forget to update the m, v, and t variables     #
   # stored in config.                                                         #
   #############################################################################
-  config['m'] = config['beta1']*config['m'] + (1-config['beta1'])*dx
-  config['v'] = config['beta2']*config['v'] + (1-config['beta2'])*(dx**2)
-  next_x = x - config['learning_rate'] * config['m'] / (np.sqrt(config['v']) + config['epsilon'])
+  learning_rate = config['learning_rate']
+  beta1 = config['beta1']
+  beta2 = config['beta2']
+  epsilon = config['epsilon']
+    
+  config['t'] += 1
+  config['m'] = beta1 * config['m'] + (1 - beta1) * dx
+  config['v'] = beta2 * config['v'] + (1 - beta2) * dx**2
+  mt_hat = config['m'] / (1 - (beta1)**config['t'])
+  vt_hat = config['v'] / (1 - (beta2)**config['t'])
+  next_x = x - learning_rate * mt_hat / (np.sqrt(vt_hat + epsilon))
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
